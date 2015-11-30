@@ -8,7 +8,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(modid = "ssm", name = "Server Status Mod", version = "0.0.1", acceptableRemoteVersions = "*")
+@Mod(modid = "ssm", name = "Server Status Mod", version = "0.0.2", acceptableRemoteVersions = "*")
 public class TestMod {
 		
 	@EventHandler

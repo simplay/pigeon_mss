@@ -12,6 +12,9 @@ public class ServerState {
 	private static ServerState instance = null;
 	private final List<String> activePlayerNames;
 	
+	private final String pigeonSecret = "5f1cb22eb645b6f1d738543a0007922ced4b0f30";
+	private final int pigeonPort = 21337;
+	
 	private List<String> activityList() {
 		return activePlayerNames;
 	}
@@ -23,14 +26,14 @@ public class ServerState {
 	public void notifyPigeon() {
 		Socket echoSocket;
 		try {
-			echoSocket = new Socket("localhost", 21337);
+			echoSocket = new Socket("localhost", pigeonPort);
 		    PrintWriter out =
 			        new PrintWriter(echoSocket.getOutputStream(), true);
 		    String names = "";
 		    for (String pName : activePlayerNames) {
 		    	names += pName+";";
 		    }
-		    out.println("players online: "+names);
+		    out.println(prettyPlayerNames(names));
 		    out.close();
 		    echoSocket.close();
 		} catch (UnknownHostException e) {
@@ -40,8 +43,26 @@ public class ServerState {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
+	
+	/**
+	 * Parse a serialized ruby hash
+	 * @example "{\\"header\\":\\"text\\",\\"secret\\":\\"SECRET\\",\\"content\\":\\"0:\CONTENT\\"}\\n"
+	 * @param pNames names of players currently online
+	 * @return
+	 */
+	private String prettyPlayerNames(String pNames) {
+		String header = rubySerializedHashKeyValue("header", "mss") + ",";
+		String secret = rubySerializedHashKeyValue("secret", pigeonSecret) + ",";
+		String content = rubySerializedHashKeyValue("content", pNames);
+		String serializedHash = "{" + header + secret + content + "}";
+		return serializedHash;
+	}
+	
+	private String rubySerializedHashKeyValue(String key, String value) {
+		return "\""+key+"\":\""+value+"\"";
+	}
+
 	
 	public static synchronized void appendToActivityList(String playerName) {
 		getInstance().activityList().add(playerName);
