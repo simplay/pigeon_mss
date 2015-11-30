@@ -65,13 +65,27 @@ public class ServerState {
 
 	
 	public static synchronized void appendToActivityList(String playerName) {
-		getInstance().activityList().add(playerName);
-		getInstance().notifyPigeon();
+		if (!hasPlayerInActivityList(playerName)) {
+			getInstance().activityList().add(playerName);
+			getInstance().notifyPigeon();
+		}
 	}
 	
 	public static synchronized void removeFromActivityList(String playerName) {
-		 List<String> playerNames = getInstance().activityList();
-		 playerNames.remove(playerName);
+		if (hasPlayerInActivityList(playerName)) {
+			List<String> playerNames = getInstance().activityList();
+			playerNames.remove(playerName);
+			getInstance().notifyPigeon();
+		}
+	}
+	
+	public static synchronized boolean hasPlayerInActivityList(String playerName) {
+		for (String pName : getActivityList()) {
+			if ( pName.equals(playerName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static synchronized List<String> getActivityList() {
