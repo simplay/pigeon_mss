@@ -45,6 +45,11 @@ public class ServerState {
 		}
 	}
 	
+	public static void wipeActivityList() {
+		getInstance().activityList().clear();
+		getInstance().notifyPigeon();
+	}
+	
 	/**
 	 * Parse a serialized ruby hash
 	 * @example "{\\"header\\":\\"text\\",\\"secret\\":\\"SECRET\\",\\"content\\":\\"0:\CONTENT\\"}\\n"
