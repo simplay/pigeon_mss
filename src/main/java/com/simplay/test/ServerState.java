@@ -33,14 +33,15 @@ public class ServerState {
 		    for (String pName : activePlayerNames) {
 		    	names += pName+";";
 		    }
+		    System.out.println("Notifying Sir Pigeon...");
 		    out.println(prettyPlayerNames(names));
 		    out.close();
 		    echoSocket.close();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Could not establish a connection.");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Could not establish a connection.");
 			e.printStackTrace();
 		}
 	}
@@ -105,5 +106,12 @@ public class ServerState {
 			instance = new ServerState();
 		}
 		return instance;
+	}
+	
+	public static void displayActivityList() {
+		List<String> activityList = ServerState.getActivityList();
+		for (String pName : activityList) {
+			System.out.println(pName + " is online");
+		}
 	}
 }
