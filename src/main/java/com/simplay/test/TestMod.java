@@ -10,7 +10,7 @@ import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(modid = "ssm", name = "Server Status Mod", version = "0.0.3", acceptableRemoteVersions = "*")
+@Mod(modid = "ssm", name = "Server Status Mod", version = "0.0.4", acceptableRemoteVersions = "*")
 public class TestMod {
 		
 	@EventHandler

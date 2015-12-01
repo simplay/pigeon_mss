@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -23,6 +25,13 @@ public class ServerState {
 	
 	private ServerState() {
 		this.activePlayers = new LinkedList<EntityPlayer>();
+		Timer uploadCheckerTimer = new Timer(true);
+		uploadCheckerTimer.scheduleAtFixedRate(
+		    new TimerTask() {
+		      public void run() { 
+		    	  notifyPigeon(); 
+		      }
+		    }, 0, 10 * 1000);
 	}
 	
 	public void notifyPigeon() {
