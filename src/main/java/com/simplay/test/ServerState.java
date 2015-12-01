@@ -7,20 +7,22 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.entity.player.EntityPlayer;
+
 public class ServerState {
 	
 	private static ServerState instance = null;
-	private final List<String> activePlayerNames;
+	private final List<EntityPlayer> activePlayers;
 	
 	private final String pigeonSecret = "5f1cb22eb645b6f1d738543a0007922ced4b0f30";
 	private final int pigeonPort = 21337;
 	
-	private List<String> activityList() {
-		return activePlayerNames;
+	private List<EntityPlayer> activityList() {
+		return activePlayers;
 	}
 	
 	private ServerState() {
-		this.activePlayerNames = new LinkedList<String>();
+		this.activePlayers = new LinkedList<EntityPlayer>();
 	}
 	
 	public void notifyPigeon() {
@@ -29,12 +31,9 @@ public class ServerState {
 			echoSocket = new Socket("localhost", pigeonPort);
 		    PrintWriter out =
 			        new PrintWriter(echoSocket.getOutputStream(), true);
-		    String names = "";
-		    for (String pName : activePlayerNames) {
-		    	names += pName+";";
-		    }
+
+		    out.println(prettyPlayerNames());
 		    System.out.println("Notifying Sir Pigeon...");
-		    out.println(prettyPlayerNames(names));
 		    out.close();
 		    echoSocket.close();
 		} catch (UnknownHostException e) {
@@ -57,10 +56,16 @@ public class ServerState {
 	 * @param pNames names of players currently online
 	 * @return
 	 */
-	private String prettyPlayerNames(String pNames) {
+	private String prettyPlayerNames() {
+		
+	    String p_contents = "";
+	    for (EntityPlayer p : activityList()) {
+	    	p_contents += p.getDisplayName() + " [" + PlayerUtil.getInstance().getPlayerPing(p) + "ms]" +";";
+	    }
+		
 		String header = rubySerializedHashKeyValue("header", "mss") + ",";
 		String secret = rubySerializedHashKeyValue("secret", pigeonSecret) + ",";
-		String content = rubySerializedHashKeyValue("content", pNames);
+		String content = rubySerializedHashKeyValue("content", p_contents);
 		String serializedHash = "{" + header + secret + content + "}";
 		return serializedHash;
 	}
@@ -70,31 +75,31 @@ public class ServerState {
 	}
 
 	
-	public static synchronized void appendToActivityList(String playerName) {
-		if (!hasPlayerInActivityList(playerName)) {
-			getInstance().activityList().add(playerName);
+	public static synchronized void appendToActivityList(EntityPlayer player) {
+		if (!hasPlayerInActivityList(player)) {
+			getInstance().activityList().add(player);
 			getInstance().notifyPigeon();
 		}
 	}
 	
-	public static synchronized void removeFromActivityList(String playerName) {
-		if (hasPlayerInActivityList(playerName)) {
-			List<String> playerNames = getInstance().activityList();
-			playerNames.remove(playerName);
+	public static synchronized void removeFromActivityList(EntityPlayer player) {
+		if (hasPlayerInActivityList(player)) {
+			List<EntityPlayer> players = getInstance().activityList();
+			players.remove(player);
 			getInstance().notifyPigeon();
 		}
 	}
 	
-	public static synchronized boolean hasPlayerInActivityList(String playerName) {
-		for (String pName : getActivityList()) {
-			if ( pName.equals(playerName)) {
+	public static synchronized boolean hasPlayerInActivityList(EntityPlayer player) {
+		for (EntityPlayer p : getActivityList()) {
+			if ( p.getDisplayName().equals(player.getDisplayName())) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	public static synchronized List<String> getActivityList() {
+	public static synchronized List<EntityPlayer> getActivityList() {
 		return getInstance().activityList();
 	}
 	
@@ -109,9 +114,9 @@ public class ServerState {
 	}
 	
 	public static void displayActivityList() {
-		List<String> activityList = ServerState.getActivityList();
-		for (String pName : activityList) {
-			System.out.println(pName + " is online");
+		List<EntityPlayer> activityList = ServerState.getActivityList();
+		for (EntityPlayer p : activityList) {
+			System.out.println(p.getDisplayName() + " is online");
 		}
 	}
 }

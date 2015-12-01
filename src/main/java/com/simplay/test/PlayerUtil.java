@@ -23,7 +23,7 @@ public class PlayerUtil {
 	
 	private PlayerUtil() {}
 	
-	public int processCommandPlayer(EntityPlayer player) {
+	public int getPlayerPing(EntityPlayer player) {
 		return ((EntityPlayerMP) player).ping;
 	}
 	

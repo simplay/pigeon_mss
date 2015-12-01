@@ -15,7 +15,7 @@ public class ServerStatusHandler {
 	public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
 		EntityPlayer player = event.player;
 		String pName = player.getDisplayName();
-		ServerState.removeFromActivityList(pName);
+		ServerState.removeFromActivityList(player);
 		System.out.println(pName + " has logged out.");
 		ServerState.displayActivityList();
 	}
@@ -24,7 +24,7 @@ public class ServerStatusHandler {
 	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		EntityPlayer player = event.player;
 		String pName = player.getDisplayName();
-		ServerState.appendToActivityList(pName);
+		ServerState.appendToActivityList(player);
 		System.out.println(pName + " has logged in.");
 		ServerState.displayActivityList();
 	}
